@@ -1,0 +1,130 @@
+### Register User API
+POST http://localhost:8000/api/users/
+Content-Type: application/json
+Accept: application/json
+
+{
+    "username": "hanchan",
+    "password": "rahasia123",
+    "name": "Handika"
+}
+
+
+### Login User API
+POST localhost:8000/api/users/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "hanchan",
+    "password": "rahasia123"
+}
+
+### Get Current User API
+GET localhost:8000/api/users/current
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+### Update User API
+PATCH localhost:8000/api/users/current
+Content-Type: application/json
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+{
+    "name": "Handika C P"
+}
+
+
+### Logout User API
+DELETE localhost:8000/api/users/logout
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+Accept: application/json
+
+### Create Contact API
+POST http://localhost:8000/api/contacts
+Content-Type: application/json
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+{
+    "first_name": "Pratama",
+    "last_name": "dika",
+    "email": "handika@gmail.com",
+    "phone": "+62 812 3456 7890"
+}
+
+### Get Contact API 586
+GET http://localhost:8000/api/contacts/586
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+### Update Contact API 586
+PUT http://localhost:8000/api/contacts/586
+Content-Type: application/json
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+{
+    "first_name": "new hanchan",
+    "last_name": "new dika",
+    "email": "new@gmail.com",
+    "phone": "+62 812 3456 7890"
+}
+
+### Delete Contact API 585
+DELETE http://localhost:8000/api/contacts/585
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+### Search Contact API
+#GET http://localhost:8000/api/contacts?size=2&page=1&name=han
+GET http://localhost:8000/api/contacts
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+
+### Create Address API
+POST http://localhost:8000/api/contacts/586/addresses
+Content-Type: application/json
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+{
+    "street": "pwk 4",
+    "city": "pwk",
+    "province": "jabar",
+    "country": "indo",
+    "postal_code": "123123"
+}
+
+### Get Address API 43
+GET http://localhost:8000/api/contacts/586/addresses/43
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+### Update Address API 43
+PUT http://localhost:8000/api/contacts/586/addresses/43
+Content-Type: application/json
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+{
+    "street": "bdg",
+    "city": "bdg",
+    "province": "jabar",
+    "country": "indo",
+    "postal_code": "123123"
+}
+
+
+### Delete Address API 43
+DELETE http://localhost:8000/api/contacts/586/addresses/40
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
+### List Address API
+GET http://localhost:8000/api/contacts/586/addresses
+Accept: application/json
+Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+
