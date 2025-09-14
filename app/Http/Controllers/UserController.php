@@ -8,6 +8,7 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,33 +19,19 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    public UserService $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
+
+
     public function register(UserRegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
-
-//        if (User::query()->where('username', $data['username'])->exists()) {
-//            throw new HttpResponseException(response([
-//                "errors" => [
-//                    "username" => [
-//                        "Username already taken"
-//                    ]
-//                ]
-//            ], 400));
-//        }
-
-        if (User::query()->where('username', $data['username'])->exists()) {
-            throw new HttpResponseException(
-                (new ErrorResource([
-                    "username" => [
-                        "Username is already taken"
-                    ]
-                ]))->response()->setStatusCode(400)
-            );
-        }
-
-        $user = new User($data);
-        $user->password = Hash::make($data['password']);
-        $user->save();
+        $user = $this->userService->register($data);
 
         return (new UserResource($user))->response()->setStatusCode(201);
     }
@@ -53,21 +40,7 @@ class UserController extends Controller
     public function login(UserLoginRequest $request): JsonResponse
     {
         $data = $request->validated();
-
-        $user = User::query()->where('username', $data['username'])->first();
-        Log::info($user);
-
-        if(!$user || !Hash::check($data['password'], $user->password)) {
-            throw new HttpResponseException(
-                (new ErrorResource([
-                    'message' => [
-                        'username and password combination is incorrect'
-                    ]
-                ]))->response()->setStatusCode(401)
-            );
-        }
-        $user->token = Str::uuid()->toString();
-        $user->save();
+        $user = $this->userService->login($data);
 
         return (new UserResource($user))->response()->setStatusCode(200);
     }
@@ -81,27 +54,16 @@ class UserController extends Controller
 
     public function update(UserUpdateRequest $request): JsonResponse
     {
-        $data = $request->validated();
         $user = Auth::user();
-
-        if (isset($data['name'])){
-            $user->name = $data['name'];
-        }
-
-        if (isset($data['password'])){
-            $user->password = Hash::make($data['password']);
-        }
-
-        $user->save();
+        $data = $request->validated();
+        $user = $this->userService->update($user, $data);
         return (new UserResource($user))->response()->setStatusCode(200);
     }
 
     public function logout(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $user->token = null;
-        $user->save();
-
+        $this->userService->logout($user);
         return response()->json([
             'data' => true
         ])->setStatusCode(200);

@@ -24,5 +24,17 @@ class AddressSeeder extends Seeder
             'contact_id' => $contact->id,
         ]);
         $address->save();
+
+
+        $contact = Contact::query()->first();
+        $address = new Address([
+            'street' => 'testStreet 2',
+            'city' => 'testCity 2',
+            'province' => 'testProvince 2',
+            'country' => 'testCountry 2',
+            'postal_code' => '123123123',
+            'contact_id' => $contact->id,
+        ]);
+        $address->save();
     }
 }
