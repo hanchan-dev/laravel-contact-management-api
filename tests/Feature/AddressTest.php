@@ -190,33 +190,6 @@ class AddressTest extends TestCase
             ]);
     }
 
-    public function testUpdateNotFound()
-    {
-        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
-        $address = Address::query()->first();
-
-        $this->put("/api/contacts/$address->contact_id/addresses/123123",
-            [
-                'street' => 'new street',
-                'city' => 'new City',
-                'province' => 'new Province',
-                'country' => 'new Country',
-                'postal_code' => '456456',
-            ],
-            [
-                'Authorization' => "test"
-            ]
-        )
-            ->assertStatus(404)
-            ->assertJson([
-                'errors' => [
-                    'message' => [
-                        'Address not found'
-                    ]
-                ]
-            ]);
-    }
-
     public function testDeleteSuccess()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);

@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 
 class User extends Model implements Authenticatable
 {
+
+    use HasFactory, AuthenticatableTrait, Authorizable;
+
     protected $table = 'users';
     protected $primaryKey = 'id';
     protected $keyType = 'int';

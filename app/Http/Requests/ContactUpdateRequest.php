@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Http\Resources\ErrorResource;
+use App\Models\Contact;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -14,7 +15,14 @@ class ContactUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() !== null;
+        $idContact = $this->route('id');
+        $contact = Contact::query()->find($idContact);
+
+        if (!$contact){
+            return false;
+        }
+
+        return $this->user()?->can('update', $contact);
     }
 
     /**

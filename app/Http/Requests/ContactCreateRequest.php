@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Http\Resources\ErrorResource;
+use App\Models\Contact;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,7 +16,7 @@ class ContactCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() !== null;
+        return $this->user()?->can('create', Contact::class);
     }
 
     /**

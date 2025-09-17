@@ -3,7 +3,15 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Models\Address;
+use App\Models\Contact;
+use App\Policies\AddressPolicy;
+use App\Policies\ContactPolicy;
+use App\Providers\Guard\TokenGuard;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +21,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        Contact::class => ContactPolicy::class,
+        Address::class => AddressPolicy::class,
     ];
 
     /**
@@ -21,6 +30,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Auth::extend('token', function (Application $app, string $name, array $config) {
+            $tokenGuard = new TokenGuard(Auth::createUserProvider($config['provider']), $app->make(Request::class));
+            $app->refresh('request', $tokenGuard, 'setRequest');
+            return $tokenGuard;
+        });
     }
 }

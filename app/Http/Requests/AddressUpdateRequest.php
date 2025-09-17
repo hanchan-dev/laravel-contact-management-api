@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Http\Resources\ErrorResource;
+use App\Models\Address;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -14,7 +15,17 @@ class AddressUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() !== null;
+        $idContact = $this->route('idContact');
+        $idAddress = $this->route('idAddress');
+        $address = Address::query()
+            ->where("id", $idAddress)
+            ->where('contact_id', $idContact)
+            ->first();
+
+        if (!$address) {
+            return false;
+        }
+        return $this->user()?->can('update', $address);
     }
 
     /**

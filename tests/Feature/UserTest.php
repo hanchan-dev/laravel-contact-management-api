@@ -131,7 +131,7 @@ class UserTest extends TestCase
             ->assertJson([
                 'errors' => [
                     'message' => [
-                        'Unauthorized'
+                        'Unauthenticated'
                     ]
                 ]
             ]);
@@ -142,13 +142,14 @@ class UserTest extends TestCase
         $this->seed(UserSeeder::class);
 
         $this->get('/api/users/current', [
+            'Accept' => 'application/json',
             'Authorization' => 'salah'
         ])
             ->assertStatus(401)
             ->assertJson([
                 'errors' => [
                     'message' => [
-                        'Unauthorized'
+                        'Unauthenticated'
                     ]
                 ]
             ]);
@@ -256,7 +257,7 @@ class UserTest extends TestCase
             ->assertJson([
                 'errors' => [
                     'message' => [
-                        'Unauthorized'
+                        'Unauthenticated'
                     ]
                 ]
             ]);

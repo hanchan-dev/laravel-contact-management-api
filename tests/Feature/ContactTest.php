@@ -80,7 +80,7 @@ class ContactTest extends TestCase
             ->assertJson([
                 'errors' => [
                     'message' => [
-                        'Unauthorized'
+                        'Unauthenticated'
                     ]
                 ]
             ]);
