@@ -8,6 +8,7 @@ use App\Services\UserService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -53,13 +54,7 @@ class UserServiceImplement implements UserService
         Log::info($user);
 
         if(!$user || !Hash::check($data['password'], $user->password)) {
-            throw new HttpResponseException(
-                (new ErrorResource([
-                    'message' => [
-                        'username and password combination is incorrect'
-                    ]
-                ]))->response()->setStatusCode(401)
-            );
+            throw new ModelNotFoundException("username and password combination is incorrect");
         }
         $user->token = Str::uuid()->toString();
         $user->save();

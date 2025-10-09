@@ -9,6 +9,7 @@ use App\Services\ContactService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -30,13 +31,7 @@ class ContactServiceImplement implements ContactService
         $contact = Contact::query()->where('id', $contactId)->where('user_id', $user->id)->first();
 
         if (!$contact) {
-            throw new HttpResponseException(
-                (new ErrorResource([
-                    'message' => [
-                        'Contact not found'
-                    ],
-                ]))->response()->setStatusCode(404)
-            );
+            throw new ModelNotFoundException("Contact not found");
         }
 
         return $contact;

@@ -70,6 +70,15 @@ class AddressController extends Controller
     {
         $user = Auth::user();
         $addresses = $this->addressService->list($idContact, $user);
+
+        if (is_string($addresses)){
+            return response()->json([
+                'data' => [],
+                'description' => [
+                    'No addresses'
+                ]
+            ])->setStatusCode(200);
+        }
         return (new AddressCollection($addresses))->response()->setStatusCode(200);
     }
 }

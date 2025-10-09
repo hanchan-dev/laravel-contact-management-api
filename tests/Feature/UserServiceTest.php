@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\UserService;
 use Database\Seeders\UserSeeder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -65,7 +66,7 @@ class UserServiceTest extends TestCase
     public function testLoginFailed()
     {
 
-        self::expectException(HttpResponseException::class);
+        self::expectException(ModelNotFoundException::class);
 
         $data = [
             'username' => 'dummy',

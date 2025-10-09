@@ -15,5 +15,5 @@ interface AddressService
     public function get(int $contactId, int $addressId, Authenticatable|Builder $user): Builder|Model;
     public function update(int $contactId, int $addressId, Authenticatable|Builder $user, array $data): Builder|Model;
     public function delete(int $contactId, int $addressId, Authenticatable|Builder $user): bool;
-    public function list(int $contactId, Authenticatable|Builder $user): Collection;
+    public function list(int $contactId, Authenticatable|Builder $user): Collection | string;
 }

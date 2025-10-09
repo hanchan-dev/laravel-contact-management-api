@@ -4,9 +4,9 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "username": "hanchan",
+    "username": "hanchanp",
     "password": "rahasia123",
-    "name": "Handika"
+    "name": "HandikaCP"
 }
 
 
@@ -16,7 +16,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "username": "hanchan",
+    "username": "hanchanp",
     "password": "rahasia123"
 }
 
@@ -38,26 +38,26 @@ Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
 
 ### Logout User API
 DELETE localhost:8000/api/users/logout
-Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+Authorization: 0704e6b7-881f-437d-8130-8fe8d6c559db
 Accept: application/json
 
 ### Create Contact API
 POST http://localhost:8000/api/contacts
 Content-Type: application/json
 Accept: application/json
-Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+Authorization: 6c97d859-dee2-4600-b79f-72bb1301fcc1
 
 {
-    "first_name": "Pratama",
+    "first_name": "Dika",
     "last_name": "dika",
     "email": "handika@gmail.com",
     "phone": "+62 812 3456 7890"
 }
 
 ### Get Contact API 586
-GET http://localhost:8000/api/contacts/586
+GET http://localhost:8000/api/contacts/1738
 Accept: application/json
-Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+Authorization: 6c97d859-dee2-4600-b79f-72bb1301fcc1
 
 ### Update Contact API 586
 PUT http://localhost:8000/api/contacts/586
@@ -85,10 +85,10 @@ Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
 
 
 ### Create Address API
-POST http://localhost:8000/api/contacts/586/addresses
+POST http://localhost:8000/api/contacts/1738/addresses
 Content-Type: application/json
 Accept: application/json
-Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+Authorization: 6c97d859-dee2-4600-b79f-72bb1301fcc1
 
 {
     "street": "pwk 4",
@@ -99,9 +99,9 @@ Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
 }
 
 ### Get Address API 43
-GET http://localhost:8000/api/contacts/586/addresses/43
+GET http://localhost:8000/api/contacts/1738/addresses/316
 Accept: application/json
-Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+Authorization: 6c97d859-dee2-4600-b79f-72bb1301fcc1
 
 ### Update Address API 43
 PUT http://localhost:8000/api/contacts/586/addresses/43
@@ -124,7 +124,7 @@ Accept: application/json
 Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
 
 ### List Address API
-GET http://localhost:8000/api/contacts/586/addresses
+GET http://localhost:8000/api/contacts/1739/addresses
 Accept: application/json
-Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+Authorization: 6c97d859-dee2-4600-b79f-72bb1301fcc1
 

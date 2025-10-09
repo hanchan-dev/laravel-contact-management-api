@@ -10,6 +10,7 @@ use App\Services\ContactService;
 use Database\Seeders\AddressSeeder;
 use Database\Seeders\ContactSeeder;
 use Database\Seeders\UserSeeder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -58,7 +59,7 @@ class AddressServiceTest extends TestCase
 
     public function testGetAddressFailed()
     {
-        self::expectException(HttpResponseException::class);
+        self::expectException(ModelNotFoundException::class);
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
         $user = User::query()->first();
         $contact = Contact::query()->first();

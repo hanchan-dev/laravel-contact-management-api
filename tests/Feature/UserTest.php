@@ -94,7 +94,7 @@ class UserTest extends TestCase
         $this->post('/api/users/login', [
             'username' => 'test',
             'password' => 'dummy',
-        ])->assertStatus(401)
+        ])->assertStatus(404)
             ->assertJson([
                 "errors" => [
                     'message' => [

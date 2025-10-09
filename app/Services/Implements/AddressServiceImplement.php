@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AddressServiceImplement implements AddressService
@@ -37,13 +38,7 @@ class AddressServiceImplement implements AddressService
         $address = Address::query()->where('contact_id', $contact->id)->where("id", $addressId)->first();
 
         if (!$address){
-            throw new HttpResponseException(
-                (new ErrorResource([
-                    'message' => [
-                        'Address not found'
-                    ]
-                ]))->response()->setStatusCode(404)
-            );
+            throw new ModelNotFoundException("Address not found");
         }
 
         return $address;
@@ -66,29 +61,17 @@ class AddressServiceImplement implements AddressService
         return true;
     }
 
-    public function list(int $contactId, Authenticatable|Builder $user): Collection
+    public function list(int $contactId, Authenticatable|Builder $user): Collection | string
     {
         $contact = $this->contactService->get($contactId, $user);
 
         $addresses = Address::query()->where('contact_id', $contact->id)->get();
         if (!$addresses){
-            throw new HttpResponseException(
-                (new ErrorResource([
-                    'message' => [
-                        'Address not found'
-                    ]
-                ]))->response()->setStatusCode(404)
-            );
+            throw new ModelNotFoundException("Address not found");
         }
         if ($addresses->isEmpty()){
-            throw new HttpResponseException(
-                response()->json([
-                    'data' => [],
-                    'description' => [
-                        'No addresses'
-                    ]
-                ])->setStatusCode(200)
-            );
+
+            return "No Addresses found" ;
         }
 
         return $addresses;

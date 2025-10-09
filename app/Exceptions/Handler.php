@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\Http\Resources\ErrorResource;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -26,5 +28,15 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        if($e instanceof ModelNotFoundException){
+            return (new ErrorResource([
+                "message" => [$e->getMessage()]
+            ]))->response()->setStatusCode(404);
+        }
+        return parent::render($request, $e);
     }
 }

@@ -8,6 +8,7 @@ use App\Services\ContactService;
 use App\Services\UserService;
 use Database\Seeders\ContactSeeder;
 use Database\Seeders\UserSeeder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -55,7 +56,7 @@ class ContactServiceTest extends TestCase
 
     public function testContactGetFailed()
     {
-        self::expectException(HttpResponseException::class);
+        self::expectException(ModelNotFoundException::class);
         $this->seed([UserSeeder::class, ContactSeeder::class]);
         $user = User::query()->first();
 
