@@ -7,13 +7,11 @@ use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
+use Jenssegers\Agent\Agent;
 
 class UserServiceImplement implements UserService
 {
@@ -48,18 +46,36 @@ class UserServiceImplement implements UserService
         return $user;
     }
 
-    public function login(array $data): Builder|Model
+    public function login(array $data, string $userAgent, string $ip): array
     {
+
         $user = User::query()->where('username', $data['username'])->first();
         Log::info($user);
 
         if(!$user || !Hash::check($data['password'], $user->password)) {
             throw new ModelNotFoundException("username and password combination is incorrect");
         }
-        $user->token = Str::uuid()->toString();
-        $user->save();
 
-        return $user;
+        $agent = new Agent();
+        $agent->setUserAgent($userAgent);
+
+        // ini coba dulu ambil ip dll, tpi msh bingung simpan dimana
+
+        $platform = $agent->platform();
+        $browser = $agent->browser();
+        $deviceType = match (true){
+            $agent->isDesktop() => 'desktop',
+            $agent->isPhone() => 'phone',
+            $agent->isTablet() => 'tablet',
+            default => 'unknown'
+        };
+
+        $token = $user->createToken($deviceType)->plainTextToken;
+
+        return [
+            'user' => $user,
+            'auth_token' => $token
+        ];
     }
 
     public function update(Authenticatable|Builder $user, array $data): Authenticatable
@@ -77,11 +93,13 @@ class UserServiceImplement implements UserService
         return $user;
     }
 
-    public function logout(Authenticatable|Builder $user): Authenticatable
+    public function logout(Authenticatable|Builder $user, $tokenPlainText): void
     {
-        $user->token = null;
-        $user->save();
-
-        return $user;
+//        $user->tokens()->where('token', hash('sha256', $token))->delete();
+        [$id, $token] = explode('|', $tokenPlainText);
+        $user->tokens()
+            ->where('id', $id)
+            ->where('token', hash('sha256', $token))
+            ->delete();
     }
 }

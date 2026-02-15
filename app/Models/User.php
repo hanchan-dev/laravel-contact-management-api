@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Model implements Authenticatable
+class User extends Authenticatable
 {
 
-    use HasFactory, AuthenticatableTrait, Authorizable;
+    use HasFactory, HasApiTokens, Notifiable;
 
     protected $table = 'users';
     protected $primaryKey = 'id';
@@ -26,40 +25,10 @@ class User extends Model implements Authenticatable
         'name'
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'remember_token'];
 
     public function contacts(): HasMany
     {
         return $this->hasMany(Contact::class, 'user_id', 'id');
-    }
-
-    public function getAuthIdentifierName()
-    {
-        return 'username';
-    }
-
-    public function getAuthIdentifier()
-    {
-        return $this->username;
-    }
-
-    public function getAuthPassword()
-    {
-        return $this->password;
-    }
-
-    public function getRememberToken()
-    {
-        return $this->token;
-    }
-
-    public function setRememberToken($value)
-    {
-        $this->token = $value;
-    }
-
-    public function getRememberTokenName()
-    {
-        return 'token';
     }
 }

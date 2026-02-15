@@ -4,9 +4,9 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "username": "hanchanp",
-    "password": "rahasia123",
-    "name": "HandikaCP"
+    "username": "hanchanp1",
+    "password": "rahasia1231",
+    "name": "HandikaCP1"
 }
 
 
@@ -16,14 +16,14 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "username": "hanchanp",
-    "password": "rahasia123"
+    "username": "hanchanp1",
+    "password": "rahasia1231"
 }
 
 ### Get Current User API
 GET localhost:8000/api/users/current
 Accept: application/json
-Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
+Authorization: Bearer 4|oFeqQX4kKa44NnvgWSOYygn9NfydCnTwsJGUoztx636e30b4
 
 ### Update User API
 PATCH localhost:8000/api/users/current
@@ -38,7 +38,7 @@ Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
 
 ### Logout User API
 DELETE localhost:8000/api/users/logout
-Authorization: 0704e6b7-881f-437d-8130-8fe8d6c559db
+Authorization: Bearer 3|xvbk4aTWFDrby6f0FrNZuDu7DnZDP5beqlk9fIlI88189bda
 Accept: application/json
 
 ### Create Contact API

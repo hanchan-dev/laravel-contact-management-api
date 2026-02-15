@@ -40,9 +40,13 @@ class UserController extends Controller
     public function login(UserLoginRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $user = $this->userService->login($data);
+        $result = $this->userService->login($data, $request->userAgent(), $request->ip());
 
-        return (new UserResource($user))->response()->setStatusCode(200);
+        return response()->json([
+            'access_token' => $result['auth_token'],
+            'token_type' => 'Bearer',
+            'user' => new UserResource($result['user'])
+        ])->setStatusCode(200);
     }
 
     public function get(Request $request): UserResource
@@ -62,8 +66,9 @@ class UserController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $user = Auth::user();
-        $this->userService->logout($user);
+        $user = $request->user();
+        $token = $request->bearerToken();
+        $this->userService->logout($user, $token);
         return response()->json([
             'data' => true
         ])->setStatusCode(200);

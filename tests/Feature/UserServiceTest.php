@@ -58,9 +58,13 @@ class UserServiceTest extends TestCase
             'password' => 'dummy',
         ];
 
-        $response = $this->userService->login($data);
+        $userAgent = "Mozila/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/";
+        $ip = "127.168.7.1";
+
+        $response = $this->userService->login($data, $userAgent, $ip);
         self::assertNotNull($response);
-        self::assertNotNull($response->token);
+        self::assertNotNull($response['user']);
+        self::assertNotNull($response['auth_token']);
     }
 
     public function testLoginFailed()
@@ -72,9 +76,10 @@ class UserServiceTest extends TestCase
             'username' => 'dummy',
             'password' => 'dummy',
         ];
+        $userAgent = "Mozila/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/";
+        $ip = "127.168.7.1";
 
-        $this->userService->login($data);
-
+        $this->userService->login($data,  $userAgent, $ip);
     }
 
     public function testUpdate()
@@ -94,18 +99,24 @@ class UserServiceTest extends TestCase
     public function testLogout()
     {
         $this->seed(UserSeeder::class);
-        $user = User::query()->first();
 
         $data = [
             'username' => 'dummy',
             'password' => 'dummy',
         ];
 
-        $response = $this->userService->login($data);
+        $userAgent = "Mozila/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/";
+        $ip = "127.168.7.1";
 
-        $response = $this->userService->logout($user);
+        $response = $this->userService->login($data, $userAgent, $ip);
+        $user = $response['user'];
+        $token = $response['auth_token'];
+
+        $this->userService->logout($user, $token);
+        $freshUser = $user->fresh();
+
         self::assertNotNull($response);
-        self::assertNull($response->token);
+        self::assertCount(0, $freshUser->tokens);
     }
 
 

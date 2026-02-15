@@ -18,7 +18,6 @@ class UserSeeder extends Seeder
             'username' => 'dummy',
             'password' => Hash::make('dummy'),
             'name' => 'dummy',
-            'token' => 'test'
         ]);
 
         $user->save();
@@ -27,7 +26,6 @@ class UserSeeder extends Seeder
             'username' => 'dummy2',
             'password' => Hash::make('dumm2'),
             'name' => 'dummy2',
-            'token' => 'test2'
         ]);
 
         $user->save();
