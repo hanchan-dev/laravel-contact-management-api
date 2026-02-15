@@ -4,6 +4,7 @@ namespace App\Services\Implements;
 
 use App\Http\Resources\ErrorResource;
 use App\Models\User;
+use App\Models\UserSession;
 use App\Services\UserService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
@@ -69,8 +70,21 @@ class UserServiceImplement implements UserService
             $agent->isTablet() => 'tablet',
             default => 'unknown'
         };
+        Log::info("platform: $platform, browser: $browser, deviceType: $deviceType, ip: $ip");
 
         $token = $user->createToken($deviceType)->plainTextToken;
+        $data = [
+            "user_id" => $user->id,
+            "token_id" => explode('|', $token)[0],
+            "platform" => $platform,
+            "browser" => $browser,
+            "device_type" => $deviceType,
+            "ip_address" => $ip,
+            "logged_in_at" => now()
+        ];
+
+        $userSession = new UserSession($data);
+        $userSession->save();
 
         return [
             'user' => $user,

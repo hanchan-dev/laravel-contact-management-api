@@ -6,8 +6,6 @@ use App\Models\User;
 use App\Services\UserService;
 use Database\Seeders\UserSeeder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -52,6 +50,7 @@ class UserServiceTest extends TestCase
     public function testLoginSuccess()
     {
         $this->seed(UserSeeder::class);
+        $user = User::query()->first();
 
         $data = [
             'username' => 'dummy',
@@ -65,6 +64,7 @@ class UserServiceTest extends TestCase
         self::assertNotNull($response);
         self::assertNotNull($response['user']);
         self::assertNotNull($response['auth_token']);
+        $this->userService->logout($user, $response['auth_token']);
     }
 
     public function testLoginFailed()

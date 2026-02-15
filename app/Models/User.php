@@ -31,4 +31,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Contact::class, 'user_id', 'id');
     }
+
+    public function sessions()
+    {
+        return $this->hasMany(UserSession::class, 'user_id', 'id');
+    }
 }

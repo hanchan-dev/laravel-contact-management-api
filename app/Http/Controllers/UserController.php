@@ -45,7 +45,7 @@ class UserController extends Controller
         return response()->json([
             'access_token' => $result['auth_token'],
             'token_type' => 'Bearer',
-            'user' => new UserResource($result['user'])
+            'data' => new UserResource($result['user'])
         ])->setStatusCode(200);
     }
 

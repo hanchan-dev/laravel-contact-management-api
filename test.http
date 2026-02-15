@@ -2,11 +2,12 @@
 POST http://localhost:8000/api/users/
 Content-Type: application/json
 Accept: application/json
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36
 
 {
-    "username": "hanchanp1",
-    "password": "rahasia1231",
-    "name": "HandikaCP1"
+    "username": "hanchanp2",
+    "password": "rahasia1232",
+    "name": "HandikaCP2"
 }
 
 
@@ -14,10 +15,11 @@ Accept: application/json
 POST localhost:8000/api/users/login
 Accept: application/json
 Content-Type: application/json
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36
 
 {
-    "username": "hanchanp1",
-    "password": "rahasia1231"
+    "username": "hanchanp2",
+    "password": "rahasia1232"
 }
 
 ### Get Current User API
@@ -38,7 +40,7 @@ Authorization: 317d6d4c-734d-4263-9e00-420f93d4705c
 
 ### Logout User API
 DELETE localhost:8000/api/users/logout
-Authorization: Bearer 3|xvbk4aTWFDrby6f0FrNZuDu7DnZDP5beqlk9fIlI88189bda
+Authorization: Bearer 27|ZrPHA8fQC1do7t5NNKoU5HrxJ7mSpor966NvloXG80eac5f7
 Accept: application/json
 
 ### Create Contact API

@@ -3,12 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\Contact;
+use App\Models\User;
 use Database\Seeders\ContactSeeder;
 use Database\Seeders\SearchSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Log;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ContactTest extends TestCase
@@ -16,15 +18,15 @@ class ContactTest extends TestCase
     public function testCreateSuccess()
     {
         $this->seed(UserSeeder::class);
-        $this->post('/api/contacts',
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
+        $this->postJson('/api/contacts',
             [
             'first_name' => 'handika',
             'last_name' => 'cp',
             'email' => 'handika@gmail.com',
             'phone' => '+62 812 2345 6789',
-            ],
-            [
-                'Authorization' => 'test'
             ]
         )
             ->assertStatus(201)
@@ -41,16 +43,16 @@ class ContactTest extends TestCase
     public function testCreateFailed()
     {
         $this->seed(UserSeeder::class);
-        $this->post('/api/contacts',
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
+        $this->postJson('/api/contacts',
             [
                 'first_name' => '',
                 'last_name' => 'cp',
                 'email' => 'handika',
                 'phone' => '+62 812 2345 6789',
             ],
-            [
-                'Authorization' => 'test'
-            ]
         )
             ->assertStatus(400)
             ->assertJson([
@@ -68,7 +70,7 @@ class ContactTest extends TestCase
     public function testCreateUnauthorized()
     {
         $this->seed(UserSeeder::class);
-        $this->post('/api/contacts',
+        $this->postJson('/api/contacts',
             [
                 'first_name' => '',
                 'last_name' => 'cp',
@@ -89,10 +91,11 @@ class ContactTest extends TestCase
     public function testGetSuccess()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $contact = Contact::query()->first();
-        $this->get("/api/contacts/$contact->id", [
-            'Authorization' => 'test'
-        ])
+        $this->getJson("/api/contacts/$contact->id")
             ->assertStatus(200)
             ->assertJson([
                'data' => [
@@ -108,9 +111,10 @@ class ContactTest extends TestCase
     public function testGetFailed()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
-        $this->get("/api/contacts/123", [
-            'Authorization' => 'test'
-        ])
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
+        $this->getJson("/api/contacts/123")
             ->assertStatus(404)
             ->assertJson([
                 'errors' => [
@@ -124,10 +128,11 @@ class ContactTest extends TestCase
     public function testGetOtherUserContact()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
-        $contact = Contact::query()->first();
-        $this->get("/api/contacts/$contact->id", [
-            'Authorization' => 'test2'
-        ])
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
+
+        $this->getJson("/api/contacts/123")
             ->assertStatus(404)
             ->assertJson([
                 'errors' => [
@@ -141,17 +146,16 @@ class ContactTest extends TestCase
     public function testUpdateSuccess()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $contact = Contact::query()->first();
-        $this->put("/api/contacts/$contact->id",
+        $this->putJson("/api/contacts/$contact->id",
             [
                 'first_name' => 'test123',
                 'last_name' => 'hehe',
                 'email' => 'wkwk@gmail.com',
                 'phone' => '+62 812 2345 6789',
-            ],
-
-            [
-            'Authorization' => 'test'
             ]
         )
             ->assertStatus(200)
@@ -168,17 +172,16 @@ class ContactTest extends TestCase
     public function testUpdateFailedValidation()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $contact = Contact::query()->first();
-        $this->put("/api/contacts/$contact->id",
+        $this->putJson("/api/contacts/$contact->id",
             [
                 'first_name' => '',
                 'last_name' => 'hehe',
                 'email' => 'wkwk@gmail.com',
                 'phone' => '+62 812 2345 6789',
-            ],
-
-            [
-                'Authorization' => 'test'
             ]
         )
             ->assertStatus(400)
@@ -194,10 +197,11 @@ class ContactTest extends TestCase
     public function testDeleteSuccess()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $contact = Contact::query()->first();
-        $this->delete(uri: "/api/contacts/$contact->id", headers: [
-                'Authorization' => 'test'
-            ])
+        $this->deleteJson(uri: "/api/contacts/$contact->id")
             ->assertStatus(200)
             ->assertJson([
                 'data' => true
@@ -207,10 +211,11 @@ class ContactTest extends TestCase
     public function testDeleteFailed()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $contact = Contact::query()->first();
-        $this->delete(uri: "/api/contacts/" . $contact->id + 1, headers: [
-            'Authorization' => 'test'
-        ])
+        $this->deleteJson(uri: "/api/contacts/" . $contact->id + 1)
             ->assertStatus(404)
             ->assertJson([
                 'errors' => [
@@ -224,10 +229,10 @@ class ContactTest extends TestCase
     public function testSearchByFirstName()
     {
         $this->seed([UserSeeder::class, SearchSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
 
-        $response = $this->get('/api/contacts?name=first', [
-            'Authorization' => 'test'
-        ])
+        $response = $this->getJson('/api/contacts?name=first')
             ->assertStatus(200)
             ->json();
 
@@ -240,10 +245,10 @@ class ContactTest extends TestCase
     public function testSearchByLastName()
     {
         $this->seed([UserSeeder::class, SearchSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
 
-        $response = $this->get('/api/contacts?name=last', [
-            'Authorization' => 'test'
-        ])
+        $response = $this->getJson('/api/contacts?name=last')
             ->assertStatus(200)
             ->json();
 
@@ -257,10 +262,10 @@ class ContactTest extends TestCase
     public function testSearchByEmail()
     {
         $this->seed([UserSeeder::class, SearchSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
 
-        $response = $this->get('/api/contacts?email=test', [
-            'Authorization' => 'test'
-        ])
+        $response = $this->getJson('/api/contacts?email=test')
             ->assertStatus(200)
             ->json();
 
@@ -273,10 +278,10 @@ class ContactTest extends TestCase
     public function testSearchByPhone()
     {
         $this->seed([UserSeeder::class, SearchSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
 
-        $response = $this->get('/api/contacts?phone=+62', [
-            'Authorization' => 'test'
-        ])
+        $response = $this->getJson('/api/contacts?phone=+62')
             ->assertStatus(200)
             ->json();
 
@@ -289,10 +294,10 @@ class ContactTest extends TestCase
     public function testSearchNotFound()
     {
         $this->seed([UserSeeder::class, SearchSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
 
-        $response = $this->get('/api/contacts?name=tidakaDa', [
-            'Authorization' => 'test'
-        ])
+        $response = $this->getJson('/api/contacts?name=tidakaDa')
             ->assertStatus(200)
             ->json();
 
@@ -305,10 +310,10 @@ class ContactTest extends TestCase
     public function testSearchWithPage()
     {
         $this->seed([UserSeeder::class, SearchSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
 
-        $response = $this->get('/api/contacts?size=5&page=2', [
-            'Authorization' => 'test'
-        ])
+        $response = $this->getJson('/api/contacts?size=5&page=2')
             ->assertStatus(200)
             ->json();
 

@@ -4,11 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Address;
 use App\Models\Contact;
+use App\Models\User;
 use Database\Seeders\AddressSeeder;
 use Database\Seeders\ContactSeeder;
 use Database\Seeders\UserSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use function Symfony\Component\Translation\t;
 
@@ -17,18 +17,18 @@ class AddressTest extends TestCase
     public function testCreateSuccess()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $contact = Contact::first();
 
-        $this->post("/api/contacts/$contact->id/addresses",
+        $this->postJson("/api/contacts/$contact->id/addresses",
             [
                 'street' => 'Test Street',
                 'city' => 'Test City',
                 'province' => 'Test Province',
                 'country' => 'Test Country',
                 'postal_code' => '123123',
-            ],
-            [
-                'Authorization' => "test"
             ]
         )->assertStatus(201)
         ->assertJson([
@@ -45,18 +45,18 @@ class AddressTest extends TestCase
     public function testCreateFailed()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $contact = Contact::first();
 
-        $this->post("/api/contacts/$contact->id/addresses",
+        $this->postJson("/api/contacts/$contact->id/addresses",
             [
                 'street' => 'Test Street',
                 'city' => 'Test City',
                 'province' => 'Test Province',
                 'country' => '',
                 'postal_code' => '123123',
-            ],
-            [
-                'Authorization' => "test"
             ]
         )->assertStatus(400)
             ->assertJson([
@@ -71,7 +71,10 @@ class AddressTest extends TestCase
     public function testCreateButContactNotFound()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
-        $contact = Contact::first();
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
+//        $contact = Contact::first();
 
         $this->post("/api/contacts/123123/addresses",
             [
@@ -80,9 +83,6 @@ class AddressTest extends TestCase
                 'province' => 'Test Province',
                 'country' => 'Test Country',
                 'postal_code' => '123123',
-            ],
-            [
-                'Authorization' => "test"
             ]
         )->assertStatus(404)
             ->assertJson([
@@ -97,11 +97,12 @@ class AddressTest extends TestCase
     public function testGetSuccess()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $address = Address::query()->first();
 
-        $this->get("/api/contacts/$address->contact_id/addresses/$address->id", [
-            'Authorization' => "test"
-        ])
+        $this->getJson("/api/contacts/$address->contact_id/addresses/$address->id")
             ->assertStatus(200)
             ->assertJson([
                 'data' => [
@@ -118,11 +119,12 @@ class AddressTest extends TestCase
     public function testGetNotFound()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $address = Address::query()->first();
 
-        $this->get("/api/contacts/$address->contact_id/addresses/123123", [
-            'Authorization' => "test"
-        ])
+        $this->getJson("/api/contacts/$address->contact_id/addresses/123123")
             ->assertStatus(404)
             ->assertJson([
                 'errors' => [
@@ -136,18 +138,18 @@ class AddressTest extends TestCase
     public function testUpdateSuccess()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $address = Address::query()->first();
 
-        $this->put("/api/contacts/$address->contact_id/addresses/$address->id",
+        $this->putJson("/api/contacts/$address->contact_id/addresses/$address->id",
             [
                 'street' => 'new street',
                 'city' => 'new City',
                 'province' => 'new Province',
                 'country' => 'new Country',
                 'postal_code' => '456456',
-            ],
-            [
-            'Authorization' => "test"
             ]
         )
             ->assertStatus(200)
@@ -166,18 +168,18 @@ class AddressTest extends TestCase
     public function testUpdateFailed()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $address = Address::query()->first();
 
-        $this->put("/api/contacts/$address->contact_id/addresses/$address->id",
+        $this->putJson("/api/contacts/$address->contact_id/addresses/$address->id",
             [
                 'street' => 'new street',
                 'city' => 'new City',
                 'province' => 'new Province',
                 'country' => '',
                 'postal_code' => '456456',
-            ],
-            [
-                'Authorization' => "test"
             ]
         )
             ->assertStatus(400)
@@ -193,13 +195,12 @@ class AddressTest extends TestCase
     public function testDeleteSuccess()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $address = Address::query()->first();
 
-        $this->delete(uri: "/api/contacts/$address->contact_id/addresses/$address->id",
-            headers: [
-                'Authorization' => "test"
-            ]
-        )
+        $this->deleteJson(uri: "/api/contacts/$address->contact_id/addresses/$address->id")
             ->assertStatus(200)
             ->assertJson([
                 'data' => true
@@ -209,13 +210,12 @@ class AddressTest extends TestCase
     public function testDeleteNotFound()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $address = Address::query()->first();
 
-        $this->delete(uri: "/api/contacts/$address->contact_id/addresses/123123",
-            headers: [
-                'Authorization' => "test"
-            ]
-        )
+        $this->deleteJson(uri: "/api/contacts/$address->contact_id/addresses/123123")
             ->assertStatus(404)
             ->assertJson([
                 'errors' => [
@@ -229,13 +229,12 @@ class AddressTest extends TestCase
     public function testListSuccess()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $contact = Contact::query()->first();
 
-        $this->get(uri: "/api/contacts/$contact->id/addresses/",
-            headers: [
-                'Authorization' => "test"
-            ]
-        )
+        $this->getJson(uri: "/api/contacts/$contact->id/addresses/")
             ->assertStatus(200)
             ->assertJson([
                 'data' => [
@@ -253,13 +252,12 @@ class AddressTest extends TestCase
     public function testListEmpty()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
+
         $contact = Contact::query()->first();
 
-        $this->get(uri: "/api/contacts/$contact->id/addresses/",
-            headers: [
-                'Authorization' => "test"
-            ]
-        )
+        $this->getJson(uri: "/api/contacts/$contact->id/addresses/")
             ->assertStatus(200)
             ->assertJson([
                 'data' => [],
@@ -272,13 +270,12 @@ class AddressTest extends TestCase
     public function testListNotFound()
     {
         $this->seed([UserSeeder::class, ContactSeeder::class]);
-        $contact = Contact::query()->first();
+        $user = User::where('username', 'dummy')->first();
+        Sanctum::actingAs($user);
 
-        $this->get(uri: "/api/contacts/123123/addresses/",
-            headers: [
-                'Authorization' => "test"
-            ]
-        )
+//        $contact = Contact::query()->first();
+
+        $this->getJson(uri: "/api/contacts/123123/addresses/")
             ->assertStatus(404)
             ->assertJson([
                 'errors' => [
